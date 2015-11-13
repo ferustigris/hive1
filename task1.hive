@@ -1,9 +1,16 @@
-CREATE EXTERNAL TABLE airports(iata string,airport string,city string,state string,country string,lat double,long double) 
+CREATE EXTERNAL TABLE airports(
+  iata string,
+  airport string,
+  city string,
+  state string,
+  country string,
+  lat double,
+  long double) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY "," 
 STORED AS textfile LOCATION '/user/hive/airports' 
 TBLPROPERTIES ("skip.header.line.count"="1");
 
-CREATE TABLE flights (
+CREATE EXTERNAL TABLE flights (
   Year INT,
   Month INT,
   DayofMonth INT,
@@ -37,3 +44,13 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 STORED AS TEXTFILE LOCATION '/user/hive/flights'
 TBLPROPERTIES ("skip.header.line.count"="1");
 
+CREATE EXTERNAL TABLE carriers(
+  code string,
+  description string) 
+ROW FORMAT DELIMITED FIELDS TERMINATED BY "," 
+STORED AS textfile LOCATION '/user/hive/carriers' 
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+SELECT f.UniqueCarrier, COUNT(f.UniqueCarrier) FROM flights f 
+JOIN carriers c ON f.UniqueCarrier=c.code 
+GROUP BY f.UniqueCarrier;
